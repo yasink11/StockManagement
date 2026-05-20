@@ -1,0 +1,32 @@
+@model Product
+@{
+    ViewData["Title"] = "Ürün Düzenle";
+}
+
+<h2>Ürün Düzenle</h2>
+<form asp-action="Edit" method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Kategori (CATEGORY_ID)</label>
+        <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Ürün Adı (NAME)</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ImageSrc" class="form-label">Resim Yolu (IMAGE_SRC)</label>
+        <input asp-for="ImageSrc" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Salesprice" class="form-label">Satış Fiyatı (SALESPRICE)</label>
+        <input asp-for="Salesprice" class="form-control" type="number" step="0.01" />
+    </div>
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="mt-2" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Sil</button>
+</form>

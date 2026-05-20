@@ -1,0 +1,60 @@
+@model ReportFilterViewModel
+
+@{
+    ViewData["Title"] = "Kategori Satış Raporu";
+}
+
+<div class="page-card">
+
+    <div class="page-header">
+        <div>
+            <h2>Kategori Satış Raporu</h2>
+            <p class="text-muted mb-0">
+                SPReportGetAllSalesDetail · En çok satılan ürünlere göre sıralı
+            </p>
+        </div>
+    </div>
+
+    <div class="grid-panel">
+
+        <form class="row g-3 mb-4">
+
+            <div class="col-md-3">
+                <label asp-for="StartDate" class="form-label"></label>
+
+                <input asp-for="StartDate"
+                       class="form-control"
+                       type="date"
+                       id="startDate" />
+            </div>
+
+            <div class="col-md-3">
+                <label asp-for="EndDate" class="form-label"></label>
+
+                <input asp-for="EndDate"
+                       class="form-control"
+                       type="date"
+                       id="endDate" />
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="button"
+                        class="btn btn-primary"
+                        id="filterBtn">
+                    Filtrele
+                </button>
+            </div>
+
+        </form>
+
+        <div id="salesReportGrid"></div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script src="~/js/pages/salesDetail.js"></script>
+
+}

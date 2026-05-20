@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "Veritabanı Bağlantısı";
+    var message = ViewBag.Message as string ?? "Bilinmeyen veritabanı hatası.";
+}
+
+<div class="page-card">
+    <div class="page-header">
+        <h2><i class="bi bi-database-x text-danger me-2"></i>Veritabanı Bağlantı Hatası</h2>
+    </div>
+    <div class="alert alert-danger">@message</div>
+
+    <h5>Çözüm A — SQL kullanıcısı (önerilen, şirket PC)</h5>
+    <ol class="text-muted">
+        <li>SSMS'i <strong>sysadmin</strong> hesabıyla açın (Windows Auth).</li>
+        <li><code>db.sql</code> ile <strong>test</strong> veritabanını oluşturun.</li>
+        <li><code>sql/create-sql-login.sql</code> dosyasını çalıştırın (kullanıcı: <code>stockapp</code> / şifre: <code>Stock123!</code>).</li>
+        <li><code>appsettings.Development.json</code> içinde <code>"Database": { "UseSqlAuthentication": true }</code> olduğundan emin olun.</li>
+        <li>Uygulamayı yeniden başlatın: <code>dotnet run --project src\StockManagement.Web</code></li>
+    </ol>
+
+    <h5>Çözüm B — Windows kullanıcısı</h5>
+    <ol class="text-muted">
+        <li><code>sql/grant-access.sql</code> scriptini SSMS'te çalıştırın.</li>
+        <li><code>appsettings.Development.json</code> → <code>"UseSqlAuthentication": false</code> yapın.</li>
+    </ol>
+
+    <h5>Sunucu adı</h5>
+    <p class="text-muted small mb-0">
+        SSMS'te bağlandığınız sunucu adını <code>Server=...</code> kısmına yazın.
+        Örnekler: <code>Server=.</code> · <code>Server=.\SQLEXPRESS</code> · <code>Server=(localdb)\MSSQLLocalDB</code>
+    </p>
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
+</div>

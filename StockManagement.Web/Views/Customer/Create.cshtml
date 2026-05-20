@@ -1,0 +1,30 @@
+@model Customer
+@{
+    ViewData["Title"] = "Yeni Müşteri";
+}
+
+<div class="page-card form-card">
+    <div class="page-header">
+        <h2>Yeni Müşteri</h2>
+    </div>
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        <div class="mb-3">
+            <label asp-for="Customertitle" class="form-label">Müşteri Ünvanı</label>
+            <input asp-for="Customertitle" class="form-control form-control-lg" />
+            <span asp-validation-for="Customertitle" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Customernumber" class="form-label">Müşteri Numarası</label>
+            <input asp-for="Customernumber" class="form-control form-control-lg" />
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-lg me-1"></i>Kaydet</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

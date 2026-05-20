@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Stok Yönetimi</title>
+
+    <!-- Bootstrap -->
+ 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    <!-- DevExtreme CSS -->
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/25.1.3/css/dx.light.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-box-seam me-2"></i>Stok Yönetimi
+            </a>
+            <nav class="nav flex-column py-2">
+                <span class="nav-section">Tanımlar</span>
+                <a class="nav-link" asp-controller="Category" asp-action="Index"><i class="bi bi-tags me-2"></i>Kategoriler</a>
+                <a class="nav-link" asp-controller="Customer" asp-action="Index"><i class="bi bi-people me-2"></i>Müşteriler</a>
+                <a class="nav-link" asp-controller="Product" asp-action="Index"><i class="bi bi-basket me-2"></i>Ürünler</a>
+                <span class="nav-section">İşlemler</span>
+                <a class="nav-link" asp-controller="Stock" asp-action="Index"><i class="bi bi-arrow-left-right me-2"></i>Stok Hareketleri</a>
+                <a class="nav-link" asp-controller="Purchase" asp-action="Create"><i class="bi bi-cart-plus me-2"></i>Yeni Alış</a>
+                <a class="nav-link" asp-controller="Sales" asp-action="Create"><i class="bi bi-receipt me-2"></i>Yeni Satış</a>
+                <a class="nav-link" asp-controller="Purchase" asp-action="Index"><i class="bi bi-list-ul me-2"></i>Alış Listesi</a>
+                <a class="nav-link" asp-controller="Sales" asp-action="Index"><i class="bi bi-list-check me-2"></i>Satış Listesi</a>
+                <span class="nav-section">Raporlar</span>
+                <a class="nav-link" asp-controller="Report" asp-action="SalesDetail"><i class="bi bi-bar-chart me-2"></i>Kategori Satış</a>
+                <a class="nav-link" asp-controller="Report" asp-action="StockReport"><i class="bi bi-clipboard-data me-2"></i>Stok Raporu</a>
+            </nav>
+        </aside>
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">Study Case · ASP.NET Core · DevExpress DataGrid</div>
+                </div>
+            </header>
+            <main class="app-content">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-db mb-3">
+                        <strong><i class="bi bi-exclamation-triangle me-1"></i>Hata</strong><br />
+                        @TempData["Error"]
+                    </div>
+                }
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success mb-3">@TempData["Success"]</div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn3.devexpress.com/jslib/25.1.3/js/dx.all.js"></script>
+
+    <script src="https://cdn3.devexpress.com/aspnetmvc/25.1.3/js/dx.aspnet.mvc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+

@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Stok Hareketleri";
+}
+
+<div class="page-card">
+
+    <div class="page-header d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Stok Hareketleri</h2>
+
+        <a class="btn btn-success" asp-action="Create">
+            Stok Girişi
+        </a>
+    </div>
+
+    <div class="grid-panel">
+
+        <div id="stockMovementGrid"></div>
+
+        @section Scripts {
+
+            <script src="~/js/pages/stockMovement.js"></script>
+
+        }
+
+    </div>
+
+</div>

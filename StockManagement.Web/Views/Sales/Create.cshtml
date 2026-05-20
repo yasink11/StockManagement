@@ -1,0 +1,286 @@
+@model SaleCreateViewModel
+
+@{
+    ViewData["Title"] = "Yeni Satış";
+}
+
+<div class="d-flex justify-content-center align-items-center py-5" style="min-height: 80vh;">
+
+    <div class="w-100" style="max-width: 900px;">
+
+        <!-- HEADER -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-1">Yeni Satış</h2>
+            <p class="text-muted mb-0">Satış işlemini hızlı ve güvenli şekilde oluştur</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-body p-5">
+
+                <form asp-action="Create" method="post">
+
+                    <!-- TOP SECTION -->
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Müşteri</label>
+                            <select asp-for="CustomerId"
+                                    asp-items="ViewBag.CustomerId"
+                                    class="form-select form-select-lg rounded-3">
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ürün</label>
+                            <select asp-for="ProductId"
+                                    asp-items="ViewBag.ProductId"
+                                    class="form-select form-select-lg rounded-3"
+                                    id="productSelect">
+                            </select>
+
+                            <small class="text-muted">
+                                Stok: <strong id="stockInfo">-</strong>
+                            </small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Miktar</label>
+                            <input asp-for="Quantity"
+                                   class="form-control form-control-lg rounded-3"
+                                   type="number"
+                                   id="quantity" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tarih</label>
+                            <input asp-for="Date"
+                                   class="form-control form-control-lg rounded-3"
+                                   type="datetime-local"
+                                   value="@Model.Date.ToString("yyyy-MM-ddTHH:mm")" />
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- PRICE SECTION -->
+                    <div class="row g-4">
+
+                        <div class="col-md-4">
+                            <label class="form-label">Liste Fiyatı</label>
+                            <input asp-for="ListPrice"
+                                   id="listPrice"
+                                   class="form-control rounded-3 bg-light"
+                                   readonly />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Satış Fiyatı</label>
+                            <input asp-for="SalesPrice"
+                                   id="salesPrice"
+                                   class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">İskonto %</label>
+                            <input asp-for="DiscountRate"
+                                   id="discountRate"
+                                   class="form-control rounded-3" />
+                        </div>
+
+                    </div>
+
+                    <!-- TOTAL BOX -->
+                    <div class="mt-4 p-4 rounded-4 text-white d-flex justify-content-between align-items-center"
+                         style="background: linear-gradient(135deg, #1e3c72, #2a5298);">
+
+                        <div>
+                            <div class="text-white-50 small">Toplam Tutar</div>
+                            <div class="fs-3 fw-bold">
+                                <input asp-for="Amount"
+                                       id="amount"
+                                       class="bg-transparent border-0 text-white fw-bold"
+                                       readonly />
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="badge bg-success px-3 py-2">Hesaplandı</span>
+                        </div>
+
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+
+                        <button type="submit" class="btn btn-primary btn-lg px-5 rounded-3">
+                            Kaydet
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5 rounded-3">
+                            İptal
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        let currentStock = 0;
+
+        $(function () {
+
+            bindEvents();
+        });
+
+        function bindEvents() {
+
+            document.getElementById('productSelect')
+                .addEventListener('change', loadProduct);
+
+            document.getElementById('salesPrice')
+                .addEventListener('input', recalc);
+
+            document.getElementById('discountRate')
+                .addEventListener('input', recalcFromDiscount);
+
+            document.getElementById('quantity')
+                .addEventListener('input', validateStock);
+        }
+
+        // =========================
+        // ÜRÜN SEÇİLİNCE
+        // =========================
+        async function loadProduct() {
+
+            const id = document.getElementById('productSelect')?.value;
+            if (!id) return;
+
+            // fiyat + ürün bilgisi
+            const res = await fetch('/Product/GetProductInfo?id=' + id);
+            if (!res.ok) return;
+
+            const data = await res.json();
+
+            const listPrice = Number(data.listPrice ?? data.ListPrice ?? 0);
+            const salesPrice = Number(data.salesPrice ?? data.SalesPrice ?? 0);
+
+            document.getElementById('listPrice').value = listPrice.toFixed(2);
+            document.getElementById('salesPrice').value = salesPrice.toFixed(2);
+
+            // 🔥 STOK (TEK KAYNAK - DB)
+            await updateStock(id);
+
+            recalc();
+        }
+
+        // =========================
+        // STOK GÜNCELLE
+        // =========================
+        async function updateStock(productId) {
+
+            const res = await fetch('/Sales/GetStock?productId=' + productId);
+
+            let stock = 0;
+
+            if (res.ok) {
+                stock = Number(await res.text());
+            }
+
+            currentStock = stock;
+
+            document.getElementById('stockInfo').textContent = stock;
+
+            validateStock();
+        }
+
+        // =========================
+        // STOK KONTROL
+        // =========================
+        function validateStock() {
+
+            const qtyEl = document.getElementById('quantity');
+            const submitBtn = document.querySelector('button[type="submit"]');
+
+            let qty = parseFloat(qtyEl.value) || 0;
+
+            // stok yoksa
+            if (currentStock <= 0) {
+
+                qtyEl.classList.add('is-invalid');
+                submitBtn.disabled = true;
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Stok Yok',
+                    text: 'Bu ürün için stok bulunmamaktadır.'
+                });
+
+                return;
+            }
+
+            // fazla yazılırsa düzelt
+            if (qty > currentStock) {
+
+                qty = currentStock;
+                qtyEl.value = currentStock;
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stok Limiti Aşıldı',
+                    text: 'Maksimum stok: ' + currentStock
+                });
+            }
+
+            qtyEl.classList.remove('is-invalid');
+            submitBtn.disabled = false;
+
+            recalc();
+        }
+
+        // =========================
+        // NORMAL HESAP
+        // =========================
+        function recalc() {
+
+            const listPrice = parseFloat(document.getElementById('listPrice').value) || 0;
+            const salesPrice = parseFloat(document.getElementById('salesPrice').value) || 0;
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+
+            let discount = 0;
+
+            if (listPrice > 0) {
+                discount = ((listPrice - salesPrice) / listPrice) * 100;
+            }
+
+            document.getElementById('discountRate').value = discount.toFixed(2);
+            document.getElementById('amount').value = (quantity * salesPrice).toFixed(2);
+        }
+
+        // =========================
+        // İSKONTO → SATIŞ FİYATI
+        // =========================
+        function recalcFromDiscount() {
+
+            const listPrice = parseFloat(document.getElementById('listPrice').value) || 0;
+            const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+
+            const salesPrice = listPrice - (listPrice * discount / 100);
+
+            document.getElementById('salesPrice').value = salesPrice.toFixed(2);
+
+            recalc();
+        }
+
+    </script>
+}

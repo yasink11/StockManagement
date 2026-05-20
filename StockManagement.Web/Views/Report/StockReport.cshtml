@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Stok Raporu";
+}
+
+<div class="page-card">
+
+    <div class="page-header">
+        <h2>Stok Raporu</h2>
+        <p class="text-muted mb-0">
+            Ürün bazında toplam stok miktarı (Stock tablosu SUM)
+        </p>
+    </div>
+
+    <div class="grid-panel">
+
+        <div id="stockGrid"></div>
+
+        @section Scripts {
+            <script src="~/js/pages/stockReport.js"> </script>
+        }
+
+    </div>
+
+</div>

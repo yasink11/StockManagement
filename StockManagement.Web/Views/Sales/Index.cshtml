@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Satışlar";
+}
+
+<div class="page-card">
+
+    <div class="page-header">
+        <h2>Satış Listesi</h2>
+
+        <a class="btn btn-success" asp-action="Create">
+            <i class="bi bi-plus-lg me-1"></i>Yeni Satış
+        </a>
+    </div>
+
+    <div class="grid-panel">
+
+        <div id="salesGrid"></div>
+
+        @section Scripts {
+
+            <script src="~/js/pages/sales.js"></script>
+
+        }
+
+    </div>
+
+</div>
